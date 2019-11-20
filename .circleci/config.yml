@@ -8,12 +8,7 @@ jobs:
     docker:
       # specify the version you desire here
       - image: circleci/node:10
-
-      # Specify service dependencies here if necessary
-      # CircleCI maintains a library of pre-built images
-      # documented at https://circleci.com/docs/2.0/circleci-images/
-      # - image: circleci/mongo:3.4.4
-
+ 
     working_directory: ~/repo
 
     steps:
@@ -27,18 +22,14 @@ jobs:
             - v1-dependencies-
 
       - run: yarn install
-      - run: yarn run build 
-      - run: ls
-
+      - run: yarn run build
       - save_cache:
           paths:
             - node_modules
           key: v1-dependencies-{{ checksum "package.json" }}
-      
-      - run: 
-          name: Run Tests
-          command: yarn test
 
+      - run: yarn test
+       
       - setup_remote_docker
 
       - run: |
@@ -46,8 +37,8 @@ jobs:
           docker build -t $IMAGE_NAME:latest -t $IMAGE_NAME:$TAG .     
           docker login -u $DOCKER_USER -p $DOCKER_PASS  
           docker push $IMAGE_NAME:$TAG
-          docker push $IMAGE_NAME:latest 
-     
+          docker push $IMAGE_NAME:latest
+
 workflows:
   version: 2
   build-master:
