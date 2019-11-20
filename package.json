@@ -28,7 +28,7 @@
   "scripts": {
     "dev": "nodemon src/server.ts",
     "build": "tsc",
-    "test": "echo Running tests..."
+    "test": "Running tests..."
   },
   "dependencies": {
     "cors": "2.8.5",
