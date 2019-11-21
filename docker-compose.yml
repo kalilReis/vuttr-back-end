@@ -1,0 +1,16 @@
+#pulls the image from dockerhub and run!
+version: "3.3"
+services:
+  vuttr:
+    image: kalilreis/vuttr-back-end:latest
+    network_mode: host
+    ports:
+     - 3000:3000
+    command: node server.js
+  watchtower:
+    image: containrrr/watchtower
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - /home/jacksparow/.docker/config.json:/config.json
+    command: --interval 30 --debug
+
