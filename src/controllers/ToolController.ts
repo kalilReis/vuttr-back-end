@@ -25,6 +25,7 @@ class ToolController {
   }
 
   public async get (req: Request, res: Response): Promise<void> {
+    console.log('get all tools')
     const tools = await Tool.find()
     res.json(tools.map(schemaToDTO))
   }
