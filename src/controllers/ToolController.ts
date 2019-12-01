@@ -25,8 +25,6 @@ class ToolController {
   }
 
   public async get (req: Request, res: Response): Promise<void> {
-    console.log('get all tools')
-    console.log('process.env.MONGO_URI ' + process.env.MONGO_URI)
     const tools = await Tool.find()
     res.json(tools.map(schemaToDTO))
   }
