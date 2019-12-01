@@ -29,10 +29,11 @@
     "typescript": "3.7.2"
   },
   "scripts": {
-    "dev": "nodemon src/server.ts",
+    "dev": "nodemon -r dotenv/config src/server.ts",
     "build": "tsc",
     "test": "jest",
-    "coverage": "jest --coverage"
+    "coverage": "jest --coverage",
+    "start": "node dist/server.js"
   },
   "dependencies": {
     "cors": "2.8.5",

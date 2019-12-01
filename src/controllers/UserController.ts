@@ -7,7 +7,7 @@ class UserController {
     return res.json(users)
   }
 
-  public async post (req: Request, res: Response): Promise<Response> {
+  public async create (req: Request, res: Response): Promise<Response> {
     await User.create(req.body)
     return res.status(201).send()
   }
