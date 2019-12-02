@@ -5,9 +5,13 @@ import ToolController from './controllers/ToolController'
 
 const routes = Router()
 
-routes.get('/users', new UserController().get)
-routes.post('/users', new UserController().create)
+const userController = new UserController()
+routes.get('/users', userController.get)
+routes.post('/users', userController.create)
 
-routes.post('/tools', new ToolController().create)
-routes.get('/tools', new ToolController().get)
+const toolController = new ToolController()
+routes.post('/tools', toolController.create)
+routes.get('/tools', toolController.get)
+routes.delete('/tools/:id', toolController.delete)
+
 export default routes
