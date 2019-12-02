@@ -16,4 +16,6 @@ const ToolSchema = new Schema({
   timestamps: true
 })
 
+ToolSchema.index({ '$**': 'text' })
+
 export default model<ToolType>('tools', ToolSchema)

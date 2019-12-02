@@ -1,6 +1,7 @@
 
 import { Request, Response } from 'express'
 import Tool, { ToolType } from '../schemas/Tool'
+import { stringLiteral } from '@babel/types'
 
 class ToolDTO {
     id: string;
@@ -25,7 +26,18 @@ class ToolController {
   }
 
   public async get (req: Request, res: Response): Promise<void> {
-    const tools = await Tool.find()
+    const tag = req.query.tag
+    const q = req.query.q
+
+    let tools = []
+    if (tag) {
+      tools = await Tool.find({ tags: tag })
+    } else if (q) {
+      tools = await Tool.find({ $text: { $search: q } })
+    } else {
+      tools = await Tool.find()
+    }
+
     res.json(tools.map(schemaToDTO))
   }
 }
