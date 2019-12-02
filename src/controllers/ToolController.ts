@@ -1,7 +1,6 @@
 
 import { Request, Response } from 'express'
 import Tool, { ToolType } from '../schemas/Tool'
-import { stringLiteral } from '@babel/types'
 
 class ToolDTO {
     id: string;
@@ -17,20 +16,29 @@ class ToolDTO {
     }
 }
 
+const schemaToDTO = (schema: ToolType): ToolDTO => {
+  console.log('schema print')
+  console.log(schema)
+  return new ToolDTO(schema.id, schema.title, schema.description, schema.tags)
+}
+
 class ToolController {
   public async create (req: Request, res: Response): Promise<void> {
     try {
       const tool = req.body
 
-      if (tool.title && await Tool.find({ title: tool.title })) {
-        res.status(400).json({ error: 'Title already exists' })
-        return
+      if (tool.title) {
+        const dbTool = await Tool.findOne({ title: tool.title })
+        if (dbTool) {
+          res.status(400).json({ error: 'Title already exists' })
+        }
       }
 
       const saved = await Tool.create(tool)
 
-      res.status(201).json(this.schemaToDTO(saved))
+      res.status(201).json(schemaToDTO(saved))
     } catch (err) {
+      console.log(err)
       if (err.name === 'ValidationError') {
         res.status(500).json(err)
       } else {
@@ -53,9 +61,9 @@ class ToolController {
         tools = await Tool.find()
       }
 
-      res.status(200).json(tools.map(this.schemaToDTO))
+      res.status(200).json(tools.map(schemaToDTO))
     } catch (err) {
-      res.status(500).json()
+      res.status(500).json(err)
     }
   }
 
@@ -69,10 +77,6 @@ class ToolController {
     } catch (err) {
       res.status(500).json()
     }
-  }
-
-  schemaToDTO (schema: ToolType): ToolDTO {
-    return new ToolDTO(schema._id, schema.title, schema.description, schema.tags)
   }
 }
 

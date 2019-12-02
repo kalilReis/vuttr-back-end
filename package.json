@@ -29,7 +29,7 @@
     "typescript": "3.7.2"
   },
   "scripts": {
-    "dev": "nodemon -r dotenv/config src/server.ts",
+    "dev": "nodemon  src/server.ts",
     "build": "tsc",
     "test": "jest",
     "coverage": "jest --coverage",

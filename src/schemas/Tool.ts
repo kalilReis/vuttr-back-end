@@ -11,7 +11,7 @@ const ToolSchema = new Schema({
   title: { type: String, unique: true, required: [true, 'Title is required'] },
   link: { type: String, required: [true, 'Link is required'] },
   description: { type: String, required: [true, 'description is required'] },
-  tags: { type: [String], required: [true, 'Tags is required'] }
+  tags: { type: [String], required: true }
 }, {
   timestamps: true
 })
