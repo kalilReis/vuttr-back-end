@@ -49,7 +49,7 @@ class ToolController {
 
   public async get (req: Request, res: Response): Promise<void> {
     try {
-      const tag = req.query.tag
+      const tag = req.query.tags_like
       const q = req.query.q
 
       let tools = []
