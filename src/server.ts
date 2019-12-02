@@ -3,9 +3,11 @@ import App from './app'
 import routes from './routes'
 
 const app = new App()
-app.express.use(routes)
 
-const port = process.env.PORT || '3000'
-app.express.listen(port, (error) => {
-  if (error) { console.log(error) } else { console.log(`Server listening on port ${port}`) }
-})
+const start = async (): Promise<void> => {
+  await app.connectDB(process.env.MONGODB_URI || '')
+  app.use(routes)
+  app.listen(process.env.PORT || '3000')
+}
+
+start()

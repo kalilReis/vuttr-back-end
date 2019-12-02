@@ -1,8 +1,9 @@
-import express, { Application } from 'express'
+import express, { Application, Router, RequestHandler } from 'express'
 import cors from 'cors'
 import mongoose from 'mongoose'
 import dotenv from 'dotenv'
 import routes from './routes'
+import { Server } from 'http'
 dotenv.config()
 
 class App {
@@ -11,7 +12,6 @@ class App {
     constructor () {
       this.express = express()
       this.middlewares()
-      this.database()
     }
 
     private middlewares (): void {
@@ -20,12 +20,22 @@ class App {
         .use(routes)
     }
 
-    private async database (): Promise<void> {
-      await mongoose.connect(process.env.MONGODB_URI || '', {
+    public async connectDB (url: string): Promise<void> {
+      await mongoose.connect(url, {
         useNewUrlParser: true,
         useUnifiedTopology: true
       })
-      console.log('database connected...')
+      console.log('database connected')
+    }
+
+    public use (...handlers: RequestHandler[]): void {
+      this.express.use(handlers)
+    }
+
+    public listen (port: string): Server {
+      return this.express.listen(port, (error) => {
+        if (error) { console.log(error) } else { console.log(`Server listening on port ${port}`) }
+      })
     }
 }
 

@@ -1,4 +1,5 @@
 import { Schema, model, Document } from 'mongoose'
+import { ToolErrorMsgs as validation } from './validation'
 
 export interface ToolType extends Document {
     title: string,
@@ -8,10 +9,14 @@ export interface ToolType extends Document {
 }
 
 const ToolSchema = new Schema({
-  title: { type: String, unique: true, required: [true, 'Title is required'] },
-  link: { type: String, required: [true, 'Link is required'] },
-  description: { type: String, required: [true, 'description is required'] },
-  tags: { type: [String], required: true }
+  title: { type: String, unique: true, required: [true, validation.titleRequired] },
+  link: { type: String, required: [true, validation.linkRequired] },
+  description: {
+    type: String,
+    maxlength: [validation.descriptionLimitExceeded.max, validation.descriptionLimitExceeded.msg],
+    required: [true, validation.descriptionRequired]
+  },
+  tags: { type: [String], required: [true, validation.tagsRequired] }
 }, {
   timestamps: true
 })
