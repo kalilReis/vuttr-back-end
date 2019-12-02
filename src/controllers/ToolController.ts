@@ -4,22 +4,22 @@ import Tool, { ToolType } from '../schemas/Tool'
 
 class ToolDTO {
     id: string;
+    link: string;
     title: string;
     description: string ;
     tags: string[];
 
-    constructor (id: string, title: string, description: string, tags: string[]) {
+    constructor (id: string, title: string, description: string, tags: string[], link: string) {
       this.id = id
       this.title = title
       this.description = description
       this.tags = tags
+      this.link = link
     }
 }
 
 const schemaToDTO = (schema: ToolType): ToolDTO => {
-  console.log('schema print')
-  console.log(schema)
-  return new ToolDTO(schema.id, schema.title, schema.description, schema.tags)
+  return new ToolDTO(schema.id, schema.title, schema.description, schema.tags, schema.link)
 }
 
 class ToolController {
