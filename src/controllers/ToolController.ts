@@ -30,7 +30,7 @@ class ToolController {
       if (tool.title) {
         const dbTool = await Tool.findOne({ title: tool.title })
         if (dbTool) {
-          res.status(400).json({ error: 'Title already exists' })
+          res.status(409).json({ error: 'Title already exists' })
         }
       }
 
