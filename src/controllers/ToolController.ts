@@ -38,7 +38,6 @@ class ToolController {
 
       res.status(201).json(schemaToDTO(saved))
     } catch (err) {
-      console.log(err)
       if (err.name === 'ValidationError') {
         res.status(500).json(err)
       } else {
@@ -63,7 +62,8 @@ class ToolController {
 
       res.status(200).json(tools.map(schemaToDTO))
     } catch (err) {
-      res.status(500).json(err)
+      console.log(err)
+      res.status(500).json()
     }
   }
 

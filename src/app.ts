@@ -1,4 +1,4 @@
-import express, { Application, Router, RequestHandler } from 'express'
+import express, { Application, RequestHandler } from 'express'
 import cors from 'cors'
 import mongoose from 'mongoose'
 import dotenv from 'dotenv'
@@ -20,12 +20,16 @@ class App {
         .use(routes)
     }
 
-    public async connectDB (url: string): Promise<void> {
-      await mongoose.connect(url, {
+    public connectDB (url: string): void {
+      mongoose.connect(url, {
         useNewUrlParser: true,
-        useUnifiedTopology: true
+        useUnifiedTopology: true,
+        useCreateIndex: true
+      }).then(() => {
+        console.log('database connected')
+      }).catch((err) => {
+        console.log(err)
       })
-      console.log('database connected')
     }
 
     public use (...handlers: RequestHandler[]): void {
