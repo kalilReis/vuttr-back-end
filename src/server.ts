@@ -4,9 +4,13 @@ import routes from './routes'
 
 const app = new App()
 
-const MONGODB_URI = process.env.MONGODB_URI || ''
-app.connectDB(MONGODB_URI)
+const run = async (): Promise<void> => {
+  await app.connectDB(process.env.MONGODB_URI || '')
+  console.log('Database Connected')
 
-const PORT = process.env.PORT || '3000'
-app.use(routes)
-app.listen(PORT)
+  const PORT = process.env.PORT || '3000'
+  app.use(routes)
+  app.listen(PORT)
+  console.log('Server listening port ' + PORT)
+}
+run()

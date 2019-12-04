@@ -1,13 +1,16 @@
 import express, { Application, RequestHandler } from 'express'
 import cors from 'cors'
-import mongoose from 'mongoose'
+import mongoose, { Mongoose } from 'mongoose'
 import dotenv from 'dotenv'
 import routes from './routes'
 import { Server } from 'http'
+
 dotenv.config()
 
 class App {
     public express: Application
+    private mongoose: Mongoose | null = null
+    private server: Server | null = null
 
     constructor () {
       this.express = express()
@@ -20,15 +23,17 @@ class App {
         .use(routes)
     }
 
-    public connectDB (url: string): void {
-      mongoose.connect(url, {
+    public async connectDB (uri: string): Promise<void> {
+      this.mongoose = await mongoose.connect(uri, {
         useNewUrlParser: true,
         useUnifiedTopology: true,
         useCreateIndex: true
-      }).then(() => {
-        console.log('database connected')
-      }).catch((err) => {
-        console.log(err)
+      })
+    }
+
+    public listen (port: string): void {
+      this.server = this.express.listen(port, function (err) {
+        if (err) { console.log(err) }
       })
     }
 
@@ -36,10 +41,9 @@ class App {
       this.express.use(handlers)
     }
 
-    public listen (port: string): Server {
-      return this.express.listen(port, (error) => {
-        if (error) { console.log(error) } else { console.log(`Server listening on port ${port}`) }
-      })
+    public async disconnect (): Promise<void> {
+      if (this.mongoose) await this.mongoose.connection.close()
+      if (this.server) this.server.close()
     }
 }
 
