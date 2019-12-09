@@ -1,5 +1,5 @@
 import { Schema, model, Document } from 'mongoose'
-import { ToolValidation as validation } from './validation'
+import { ToolValidation as valid } from './validation'
 
 export interface ToolType extends Document {
   readonly title: string,
@@ -9,14 +9,14 @@ export interface ToolType extends Document {
 }
 
 const ToolSchema = new Schema({
-  title: { type: String, unique: true, required: [true, validation.titleRequired] },
-  link: { type: String, required: [true, validation.linkRequired] },
+  title: { type: String, unique: true, required: [true, valid.titleRequired] },
+  link: { type: String, required: [true, valid.linkRequired] },
   description: {
     type: String,
-    maxlength: [validation.descriptionLimitExceeded.max, validation.descriptionLimitExceeded.msg],
-    required: [true, validation.descriptionRequired]
+    maxlength: [valid.descriptionLimitExceeded.max, valid.descriptionLimitExceeded.msg],
+    required: [true, valid.descriptionRequired]
   },
-  tags: { type: [String], required: [true, validation.tagsRequired] }
+  tags: { type: [String], required: [true, valid.tagsRequired] }
 }, {
   timestamps: true
 })

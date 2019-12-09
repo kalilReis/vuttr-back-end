@@ -23,6 +23,14 @@ const tool = {
   ]
 }
 
+const user = {
+  firstName: 'maria',
+  lastName: 'dos santos',
+  email: 'maria@maria.com',
+  password: '1234',
+  confirmationPassword: '1234'
+}
+
 describe('e2e', function () {
   const app: App = new App({ dbURI: process.env.MONGODB_URI || '', port: process.env.PORT || '3000' })
   let createdTool: ToolType | null = null
@@ -40,14 +48,6 @@ describe('e2e', function () {
   })
 
   it('Should create an valid user', async () => {
-    const user = {
-      firstName: 'maria',
-      lastName: 'dos santos',
-      email: 'maria@maria.com',
-      password: '1234',
-      confirmationPassword: '1234'
-    }
-
     await request(app.express).post('/users').send(user).expect(201)
 
     const { body } = await request(app.express)
