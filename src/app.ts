@@ -8,32 +8,52 @@ import { Server } from 'http'
 dotenv.config()
 
 class App {
-    public express: Application
+    readonly express: Application = express()
     private mongoose: Mongoose | null = null
     private server: Server | null = null
+    private dbURI: string
+    private port: string
 
-    constructor () {
-      this.express = express()
-      this.middlewares()
+    constructor ({ dbURI, port }:{ dbURI: string, port: string }) {
+      if (!dbURI) {
+        throw Error('No mongo connection string. Set MONGODB_URI environment variable')
+      }
+
+      if (!port) {
+        throw Error('No server port defined. set PORT environment variable')
+      }
+
+      this.configServer()
+      this.dbURI = dbURI
+      this.port = port
     }
 
-    private middlewares (): void {
+    private configServer (): void {
       this.express.use(express.json())
         .use(cors())
         .use(routes)
     }
 
-    public async connectDB (uri: string): Promise<void> {
-      this.mongoose = await mongoose.connect(uri, {
+    public start (): void {
+      const run = async () : Promise<void> => {
+        await this.connectDB()
+        this.listen()
+      }
+      run()
+    }
+
+    private async connectDB (): Promise<void> {
+      this.mongoose = await mongoose.connect(this.dbURI, {
         useNewUrlParser: true,
         useUnifiedTopology: true,
         useCreateIndex: true
       })
+      console.log('database connected...')
     }
 
-    public listen (port: string): void {
-      this.server = this.express.listen(port, function (err) {
-        if (err) { console.log(err) }
+    private listen (): void {
+      this.server = this.express.listen(this.port, (err) => {
+        if (err) { console.error(err) } else { console.log('server connected on port ' + this.port) }
       })
     }
 
@@ -41,7 +61,7 @@ class App {
       this.express.use(handlers)
     }
 
-    public async disconnect (): Promise<void> {
+    public async stop (): Promise<void> {
       if (this.mongoose) await this.mongoose.connection.close()
       if (this.server) this.server.close()
     }

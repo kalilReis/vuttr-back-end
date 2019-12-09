@@ -1,21 +1,23 @@
 
 import { Request, Response } from 'express'
 import Tool, { ToolType } from '../schemas/Tool'
+import { handleError } from './utils'
+import { ToolValidation } from '../schemas/validation'
 
 class ToolDTO {
-    id: string;
-    link: string;
-    title: string;
-    description: string ;
-    tags: string[];
+  id: string;
+  link: string;
+  title: string;
+  description: string ;
+  tags: string[];
 
-    constructor (id: string, title: string, description: string, tags: string[], link: string) {
-      this.id = id
-      this.title = title
-      this.description = description
-      this.tags = tags
-      this.link = link
-    }
+  constructor (id: string, title: string, description: string, tags: string[], link: string) {
+    this.id = id
+    this.title = title
+    this.description = description
+    this.tags = tags
+    this.link = link
+  }
 }
 
 const schemaToDTO = (schema: ToolType): ToolDTO => {
@@ -23,30 +25,25 @@ const schemaToDTO = (schema: ToolType): ToolDTO => {
 }
 
 class ToolController {
-  public async create (req: Request, res: Response): Promise<void> {
+  public static async create (req: Request, res: Response): Promise<Response> {
     try {
       const tool = req.body
 
-      if (tool.title) {
+      if (tool && tool.title) {
         const dbTool = await Tool.findOne({ title: tool.title })
         if (dbTool) {
-          res.status(409).json({ error: 'Title already exists' })
+          return res.status(409).json({ error: ToolValidation.titleAlreadyInUse })
         }
       }
 
       const saved = await Tool.create(tool)
-
-      res.status(201).json(schemaToDTO(saved))
+      return res.status(201).json(schemaToDTO(saved))
     } catch (err) {
-      if (err.name === 'ValidationError') {
-        res.status(400).json(err)
-      } else {
-        res.status(500).json()
-      }
+      return handleError(err, res)
     }
   }
 
-  public async get (req: Request, res: Response): Promise<void> {
+  public static async get (req: Request, res: Response): Promise<Response> {
     try {
       const tag = req.query.tags_like
       const q = req.query.q
@@ -60,22 +57,21 @@ class ToolController {
         tools = await Tool.find()
       }
 
-      res.status(200).json(tools.map(schemaToDTO))
+      return res.status(200).json(tools.map(schemaToDTO))
     } catch (err) {
-      console.log(err)
-      res.status(500).json()
+      return res.status(500).json()
     }
   }
 
-  public async delete (req: Request, res: Response): Promise<void> {
+  public static async delete (req: Request, res: Response): Promise<Response> {
     try {
       const id = req.params.id
       if (id) {
         await Tool.deleteOne({ _id: id })
       }
-      res.status(204).json()
+      return res.status(204).json()
     } catch (err) {
-      res.status(500).json()
+      return res.status(500).json()
     }
   }
 }

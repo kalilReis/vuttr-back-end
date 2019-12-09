@@ -1,17 +1,17 @@
 import { Router } from 'express'
-
 import UserController from './controllers/UserController'
 import ToolController from './controllers/ToolController'
+import AuthController from './controllers/AuthController'
 
 const routes = Router()
 
-const userController = new UserController()
-routes.get('/users', userController.get)
-routes.post('/users', userController.create)
+routes.post('/login', AuthController.login)
 
-const toolController = new ToolController()
-routes.post('/tools', toolController.create)
-routes.get('/tools', toolController.get)
-routes.delete('/tools/:id', toolController.delete)
+routes.post('/users', UserController.create)
+
+routes.use('/tools', AuthController.authJWT)
+routes.post('/tools', ToolController.create)
+routes.get('/tools', ToolController.get)
+routes.delete('/tools/:id', ToolController.delete)
 
 export default routes

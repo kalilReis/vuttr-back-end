@@ -1,11 +1,11 @@
 import { Schema, model, Document } from 'mongoose'
-import { ToolErrorMsgs as validation } from './validation'
+import { ToolValidation as validation } from './validation'
 
 export interface ToolType extends Document {
-    title: string,
-    link: string,
-    description: string,
-    tags: string[]
+  readonly title: string,
+  readonly link: string,
+  readonly description: string,
+  readonly tags: string[]
 }
 
 const ToolSchema = new Schema({
