@@ -3,12 +3,17 @@ import passportLocal from 'passport-local'
 import passportJWT from 'passport-jwt'
 import User from './schemas/User'
 import jwt from 'jsonwebtoken'
+import dotenv from 'dotenv'
+dotenv.config()
 
 const LocalStrategy = passportLocal.Strategy
 const JWTStrategy = passportJWT.Strategy
 const ExtractJWT = passportJWT.ExtractJwt
 
-const JWT_SECRET = 'WepggV74s8WKnxkFPs5'
+const secret = (): string => {
+  if (!process.env.JWT_SECRET) throw Error('JWT_SECRET environment not found!')
+  return process.env.JWT_SECRET
+}
 
 passport.use(new LocalStrategy({
   usernameField: 'email',
@@ -19,7 +24,7 @@ passport.use(new LocalStrategy({
     if (!user || !user.comparePassword(password)) {
       return cb(null, false)
     } else {
-      const token = jwt.sign({ id: user.id }, JWT_SECRET, { expiresIn: '1h' })
+      const token = jwt.sign({ id: user.id }, secret(), { expiresIn: '1h' })
       return cb(null, 'Bearer ' + token)
     }
   } catch (error) {
@@ -29,7 +34,7 @@ passport.use(new LocalStrategy({
 
 passport.use(new JWTStrategy({
   jwtFromRequest: ExtractJWT.fromAuthHeaderAsBearerToken(),
-  secretOrKey: JWT_SECRET
+  secretOrKey: secret()
 }, async function (jwtPayload, cb) {
   try {
     const user = await User.findById(jwtPayload.id)

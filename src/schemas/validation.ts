@@ -10,7 +10,6 @@ export const ToolValidation = {
 
 export const UserValidation = {
   emailAlreadyInUse: 'Email already in use',
-
   firstNameIsRequired: 'First name is required',
   lastNameIsRequired: 'Last name is required',
   emailIsRequired: 'Email is required',

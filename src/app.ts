@@ -1,11 +1,8 @@
 import express, { Application, RequestHandler } from 'express'
 import cors from 'cors'
 import mongoose, { Mongoose } from 'mongoose'
-import dotenv from 'dotenv'
 import routes from './routes'
 import { Server } from 'http'
-
-dotenv.config()
 
 class App {
     readonly express: Application = express()

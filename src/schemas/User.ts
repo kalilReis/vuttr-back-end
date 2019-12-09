@@ -1,5 +1,6 @@
 import { Schema, model, Document } from 'mongoose'
 import bcrypt from 'bcrypt'
+import { UserValidation as msg } from '../schemas/validation'
 
 export const hashValueOf = (value: string): string => {
   const SALT_FACTOR = 10
@@ -16,10 +17,10 @@ export interface User extends Document {
 }
 
 const UserSchema = new Schema<User>({
-  firstName: { type: String, required: [true, 'first name is required'] },
-  lastName: { type: String, required: [true, 'last name is required'] },
-  email: { type: String, unique: true, required: [true, 'email is required'] },
-  password: { type: String, required: [true, 'password is required'] }
+  firstName: { type: String, required: [true, msg.firstNameIsRequired] },
+  lastName: { type: String, required: [true, msg.lastNameIsRequired] },
+  email: { type: String, unique: true, required: [true, msg.emailIsRequired] },
+  password: { type: String, required: [true, msg.passwordIsRequired] }
 }, {
   timestamps: true
 })
