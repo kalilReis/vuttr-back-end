@@ -58,7 +58,7 @@ describe('e2e', function () {
     token = body.token
   })
 
-  it('Should create a tool with id', async () => {
+  it('Should create a tool', async () => {
     const { body } = await request(app.express).post('/tools').set({ Authorization: token }).send(tool).expect(201)
     createdTool = body
     expect(body.id).not.toBeNull()

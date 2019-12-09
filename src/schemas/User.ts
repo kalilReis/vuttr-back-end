@@ -7,16 +7,17 @@ export const hashValueOf = (value: string): string => {
   return bcrypt.hashSync(value, SALT_FACTOR)
 }
 
-export interface User extends Document {
-   firstName: string,
-   lastName: string,
-   email: string,
+export interface UserType extends Document {
+   id: string
+   firstName: string
+   lastName: string
+   email: string
    password: string
 
   comparePassword(password: string): boolean
 }
 
-const UserSchema = new Schema<User>({
+const UserSchema = new Schema<UserType>({
   firstName: { type: String, required: [true, msg.firstNameIsRequired] },
   lastName: { type: String, required: [true, msg.lastNameIsRequired] },
   email: { type: String, unique: true, required: [true, msg.emailIsRequired] },
@@ -29,9 +30,9 @@ UserSchema.methods.comparePassword = function (password: string): boolean {
   return bcrypt.compareSync(password, this.password)
 }
 
-UserSchema.pre<User>('save', function (next) {
+UserSchema.pre<UserType>('save', function (next) {
   this.password = hashValueOf(this.password)
   next()
 })
 
-export default model<User>('users', UserSchema)
+export default model<UserType>('users', UserSchema)
