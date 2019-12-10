@@ -8,23 +8,50 @@ export const hashValueOf = (value: string): string => {
 }
 
 export interface UserType extends Document {
-   id: string
-   firstName: string
-   lastName: string
-   email: string
-   password: string
+  id: string
+  firstName: string
+  lastName: string
+  email: string
+  password: string
 
   comparePassword(password: string): boolean
 }
 
-const UserSchema = new Schema<UserType>({
-  firstName: { type: String, required: [true, msg.firstNameIsRequired] },
-  lastName: { type: String, required: [true, msg.lastNameIsRequired] },
-  email: { type: String, unique: true, required: [true, msg.emailIsRequired] },
-  password: { type: String, required: [true, msg.passwordIsRequired] }
-}, {
-  timestamps: true
-})
+export class UserDTO {
+  constructor (
+    readonly id: string,
+    readonly firstName: string,
+    readonly lastName: string,
+    readonly email: string,
+    readonly token: string
+  ) {
+    this.id = id
+    this.firstName = firstName
+    this.lastName = lastName
+    this.email = email
+    this.token = token
+  }
+}
+
+export function toDTO (u: UserType, token: string): UserDTO {
+  return new UserDTO(u.id, u.firstName, u.lastName, u.email, token)
+}
+
+const UserSchema = new Schema<UserType>(
+  {
+    firstName: { type: String, required: [true, msg.firstNameIsRequired] },
+    lastName: { type: String, required: [true, msg.lastNameIsRequired] },
+    email: {
+      type: String,
+      unique: true,
+      required: [true, msg.emailIsRequired]
+    },
+    password: { type: String, required: [true, msg.passwordIsRequired] }
+  },
+  {
+    timestamps: true
+  }
+)
 
 UserSchema.methods.comparePassword = function (password: string): boolean {
   return bcrypt.compareSync(password, this.password)

@@ -1,26 +1,17 @@
-
 import { Request, Response } from 'express'
-import Tool, { ToolType } from '../schemas/Tool'
+import Tool, { ToolType, ToolDTO } from '../schemas/Tool'
 import { handleError } from './utils'
 import { ToolValidation } from '../schemas/validation'
 import { UserType } from '../schemas/User'
 
-class ToolDTO {
-  constructor (readonly id: string,
-               readonly title: string,
-               readonly description: string,
-               readonly tags: string[],
-               readonly link: string) {
-    this.id = id
-    this.title = title
-    this.description = description
-    this.tags = tags
-    this.link = link
-  }
-}
-
 const schemaToDTO = (tool: ToolType): ToolDTO => {
-  return new ToolDTO(tool.id, tool.title, tool.description, tool.tags, tool.link)
+  return new ToolDTO(
+    tool.id,
+    tool.title,
+    tool.description,
+    tool.tags,
+    tool.link
+  )
 }
 
 class ToolController {
@@ -30,9 +21,14 @@ class ToolController {
       const user = req.user as UserType
 
       if (tool && tool.title) {
-        const dbTool = await Tool.findOne({ title: tool.title, userId: user.id })
+        const dbTool = await Tool.findOne({
+          title: tool.title,
+          userId: user.id
+        })
         if (dbTool) {
-          return res.status(409).json({ error: ToolValidation.titleAlreadyInUse })
+          return res
+            .status(409)
+            .json({ error: ToolValidation.titleAlreadyInUse })
         }
       }
 

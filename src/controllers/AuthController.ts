@@ -7,11 +7,12 @@ const unauthErrorResp = (res: Response): Response => {
 
 export default class AuthController {
   public static login (req: Request, res: Response): void {
-    passport.authenticate('local', { session: false }, async (err, token) => {
-      if (err || !token) {
+    passport.authenticate('local', { session: false }, async (err, user) => {
+      if (err || !user) {
         return unauthErrorResp(res)
       }
-      return res.json({ token })
+
+      return res.json(user)
     })(req, res)
   }
 
