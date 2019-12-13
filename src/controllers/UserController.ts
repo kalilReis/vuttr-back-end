@@ -10,13 +10,22 @@ class UserController {
       const confirmationPassword = req.body.confirmationPassword
 
       if (password !== confirmationPassword) {
-        return res.status(400).json({ erros: { password: UserValidation.passwordMustBeEqual } })
+        return res
+          .status(400)
+          .json({ erros: { password: UserValidation.passwordMustBeEqual } })
       }
 
       if (req.body.email) {
         const userDb = await User.findOne({ email: req.body.email })
         if (userDb) {
-          return res.status(409).json({ errors: { email: UserValidation.emailAlreadyInUse } })
+          return res.status(409).json({
+            errors: {
+              email: {
+                path: 'email',
+                message: UserValidation.emailAlreadyInUse
+              }
+            }
+          })
         }
       }
 
