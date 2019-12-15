@@ -25,6 +25,20 @@ export class ToolDTO {
   }
 }
 
+function validateTags (arr: string[]): Promise<boolean> {
+  if (arr.length > 0) {
+    return Promise.resolve(true)
+  }
+
+  arr.forEach(tag => {
+    if (tag.trim().length === 0) {
+      return Promise.resolve(false)
+    }
+  })
+
+  return Promise.resolve(false)
+}
+
 const ToolSchema = new Schema(
   {
     title: { type: String, required: [true, valid.titleRequired] },
@@ -37,7 +51,14 @@ const ToolSchema = new Schema(
       ],
       required: [true, valid.descriptionRequired]
     },
-    tags: { type: [String], required: [true, valid.tagsRequired] },
+    tags: {
+      type: [String],
+      validate: {
+        validator: validateTags,
+        message: valid.tagsRequired
+      }
+    },
+
     userId: { type: String, required: true }
   },
   {

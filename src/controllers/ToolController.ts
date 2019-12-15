@@ -31,7 +31,6 @@ class ToolController {
             .json({ error: ToolValidation.titleAlreadyInUse })
         }
       }
-
       const saved = await Tool.create({ ...tool, userId: user.id })
       return res.status(201).json(schemaToDTO(saved))
     } catch (err) {

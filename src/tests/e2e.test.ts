@@ -1,4 +1,3 @@
-
 /* eslint-disable no-undef */
 import request from 'supertest'
 
@@ -13,14 +12,9 @@ const tool = {
   id: 0,
   title: 'Notion',
   link: 'https://notion.so',
-  description: 'All in one tool to organize teams and ideas. Write, plan, collaborate, and get organized. ',
-  tags: [
-    'organization',
-    'planning',
-    'collaboration',
-    'writing',
-    'calendar'
-  ]
+  description:
+    'All in one tool to organize teams and ideas. Write, plan, collaborate, and get organized. ',
+  tags: ['organization', 'planning', 'collaboration', 'writing', 'calendar']
 }
 
 const user = {
@@ -32,7 +26,10 @@ const user = {
 }
 
 describe('e2e', function () {
-  const app: App = new App({ dbURI: process.env.MONGODB_URI || '', port: process.env.PORT || '3000' })
+  const app: App = new App({
+    dbURI: process.env.MONGODB_URI || '',
+    port: process.env.PORT || '3000'
+  })
   let createdTool: ToolType | null = null
   let token = ''
 
@@ -48,7 +45,10 @@ describe('e2e', function () {
   })
 
   it('Should create an valid user', async () => {
-    await request(app.express).post('/users').send(user).expect(201)
+    await request(app.express)
+      .post('/users')
+      .send(user)
+      .expect(201)
 
     const { body } = await request(app.express)
       .post('/login')
@@ -59,7 +59,11 @@ describe('e2e', function () {
   })
 
   it('Should create a tool', async () => {
-    const { body } = await request(app.express).post('/tools').set({ Authorization: token }).send(tool).expect(201)
+    const { body } = await request(app.express)
+      .post('/tools')
+      .set({ Authorization: token })
+      .send(tool)
+      .expect(201)
     createdTool = body
     expect(body.id).not.toBeNull()
     expect(body.id.trim()).not.toBe('')
@@ -67,44 +71,74 @@ describe('e2e', function () {
   })
 
   it('Should fail when try to create a tool with an existent tittle', async () => {
-    await request(app.express).post('/tools').set({ Authorization: token }).send(tool).expect(409)
+    await request(app.express)
+      .post('/tools')
+      .set({ Authorization: token })
+      .send(tool)
+      .expect(409)
   })
 
   it('Should fail when try to create an empty tool', async () => {
     const emptyTool = {}
-    const { body } = await request(app.express).post('/tools').set({ Authorization: token }).send(emptyTool).expect(400)
+    const { body } = await request(app.express)
+      .post('/tools')
+      .set({ Authorization: token })
+      .send(emptyTool)
+      .expect(400)
     expect(body.errors.title.message).toBe(ToolValidation.titleRequired)
     expect(body.errors.link.message).toBe(ToolValidation.linkRequired)
-    expect(body.errors.description.message).toBe(ToolValidation.descriptionRequired)
+    expect(body.errors.description.message).toBe(
+      ToolValidation.descriptionRequired
+    )
+    expect(body.errors.tags.message).toBe(ToolValidation.tagsRequired)
   })
 
   it('Should get the created tool by tag', async () => {
     // eslint-disable-next-line @typescript-eslint/camelcase
-    const { body } = await request(app.express).get('/tools').set({ Authorization: token }).query({ tags_like: tool.tags[0] })
+    const { body } = await request(app.express)
+      .get('/tools')
+      .set({ Authorization: token })
+      .query({ tags_like: tool.tags[0] })
     expect(body[0]).toEqual(createdTool)
   })
 
   it('Should retrieve an empty array for an unknow tag', async () => {
-    const randomTag = Math.random().toString(36).substring(7)
+    const randomTag = Math.random()
+      .toString(36)
+      .substring(7)
     // eslint-disable-next-line @typescript-eslint/camelcase
-    const { body } = await request(app.express).get('/tools').set({ Authorization: token }).query({ tags_like: randomTag })
+    const { body } = await request(app.express)
+      .get('/tools')
+      .set({ Authorization: token })
+      .query({ tags_like: randomTag })
     expect(body).toEqual([])
   })
 
   it('Should retrieve the created tool for a textual search', async () => {
-    const { body } = await request(app.express).get('/tools').set({ Authorization: token }).query({ q: tool.description.substring(0, 10) })
+    const { body } = await request(app.express)
+      .get('/tools')
+      .set({ Authorization: token })
+      .query({ q: tool.description.substring(0, 10) })
     expect(body[0]).toEqual(createdTool)
   })
 
   it('Should retrieve an empty array for an unknow textual query', async () => {
-    const unknowQuery = Math.random().toString(36).substring(7)
-    const { body } = await request(app.express).get('/tools').set({ Authorization: token }).query({ q: unknowQuery })
+    const unknowQuery = Math.random()
+      .toString(36)
+      .substring(7)
+    const { body } = await request(app.express)
+      .get('/tools')
+      .set({ Authorization: token })
+      .query({ q: unknowQuery })
     expect(body).toEqual([])
   })
 
   it('Should delete the tool by id', async () => {
     if (createdTool && createdTool.id) {
-      await request(app.express).delete('/tools/' + createdTool.id).set({ Authorization: token }).expect(204)
+      await request(app.express)
+        .delete('/tools/' + createdTool.id)
+        .set({ Authorization: token })
+        .expect(204)
     } else {
       throw Error('created tool undefined')
     }
